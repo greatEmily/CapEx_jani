@@ -5,6 +5,8 @@ from .forms import RequestForm
 from django.db.models import Sum
 from django.utils.timezone import now
 from datetime import timedelta
+from django.contrib.auth.forms import UserCreationForm
+
 
 
 # Create your views here.
@@ -80,3 +82,14 @@ def reports(request):
     }
 
     return render(request, 'requests/reports.html', context)
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  # Redirect to login page after signup
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})

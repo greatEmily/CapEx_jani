@@ -1,3 +1,5 @@
-{% extends "base.html" %} {% block content %}
+{% extends "base.html" %} {% block title %}Login{% endblock %} {% block content %}
 Login
-{% csrf_token %} {{ form.as_p }} {% endblock %}
+{% csrf_token %} {{ form.as_p }}
+Don't have an account? <a href="{% url 'register' %}">Register here</a>.
+{% endblock %}
