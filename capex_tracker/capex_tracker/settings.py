@@ -127,4 +127,4 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 # Login Redirect
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/requests/dashboard/'

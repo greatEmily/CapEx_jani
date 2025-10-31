@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import Request, Theatre
+from .models import Request, Theatre, UserProfile
 from .forms import RequestForm
 from django.db.models import Sum
 from django.utils.timezone import now
@@ -11,22 +11,24 @@ from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
 
-login_required
+@login_required
 def submit_request(request):
     if request.method == 'POST':
         form = RequestForm(request.POST)
         if form.is_valid():
             # Save logic here — either to a model or trigger admin workflow
             # Example:
+            theatre = UserProfile.objects.get(user=request.user).theatre
             Request.objects.create(
                 equipment=form.cleaned_data['equipment'],
-                approval_status='Requested',
+                approval_status='Pending',
                 business_case=form.cleaned_data['business_case'],
                 requester=request.user,  # if using auth
                 name=form.cleaned_data['name'],
                 type=form.cleaned_data['type'],
+                theatre=theatre,
             )
-            return redirect('success_page')
+            return redirect('dashboard') # Redirect to dashboard after submission
     else:
         form = RequestForm()
     return render(request, 'requests/submit_request.html', {'form': form})
@@ -42,7 +44,7 @@ def dashboard(request):
         # Filter by region (we’ll need to associate region with user or RVP)
         requests = Request.objects.filter(theatre__region='SomeRegion')  # Customize this
     elif user.groups.filter(name='Theatre').exists():
-        requests = Request.objects.filter(requested_by=user)
+        requests = Request.objects.filter(requester=user)
     else:
         requests = Request.objects.none()
 

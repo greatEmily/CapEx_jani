@@ -34,13 +34,17 @@ class Equipment(models.Model):
 class Request(models.Model):
     theatre = models.ForeignKey(Theatre, on_delete=models.CASCADE)
     equipment = models.ForeignKey(Equipment, on_delete=models.CASCADE)
-    requested_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    #requested_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     request_date = models.DateField(auto_now_add=True)
-    approval_status = models.CharField(max_length=50, choices=[
-        ('Pending', 'Pending'),
-        ('Approved', 'Approved'),
-        ('Rejected', 'Rejected')
-    ])
+    approval_status = models.CharField(
+        max_length=50,
+        choices=[
+            ('Pending', 'Pending'),
+            ('Approved', 'Approved'),
+            ('Rejected', 'Rejected')
+        ],
+        default='Pending'  # ✅ sets default value
+    )
     requisition_number = models.CharField(max_length=50, blank=True, null=True)
     po_number = models.CharField(max_length=50, blank=True, null=True)
     shipping_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -58,3 +62,13 @@ class Request(models.Model):
 
     def __str__(self):
         return f"Request #{self.id} - {self.equipment} for {self.theatre}"
+
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    theatre = models.ForeignKey(Theatre, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.theatre.name if self.theatre else 'No Theatre'}"
+

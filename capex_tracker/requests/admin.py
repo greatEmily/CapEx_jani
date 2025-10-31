@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Theatre, Equipment, Request
+from .models import Theatre, Equipment, Request, UserProfile
 from django.utils.html import format_html
 
 # Register your models here.
@@ -26,3 +26,10 @@ class RequestAdmin(admin.ModelAdmin):
     list_display = ('id', 'theatre', 'equipment', 'approval_status', 'request_date')
     list_filter = ('approval_status', 'request_date')
     search_fields = ('requisition_number', 'po_number')
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'theatre')
+    search_fields = ('user__username', 'theatre__name')
+    list_filter = ('theatre',)

@@ -1,4 +1,52 @@
-Request Dashboard
-{% for req in requests %} {% endfor %}
-ID	Theatre	Equipment	Status	Total Price
-{{ req.id }}	{{ req.theatre }}	{{ req.equipment }}	{{ req.approval_status }}	${{ req.total_price }}
+{% extends "base.html" %}
+{% block title %}My Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Equipment Requests</h4>
+        </div>
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Theatre</th>
+                        <th>Equipment</th>
+                        <th>Status</th>
+                        <th>Requester</th>
+                        <th>Request Date</th>
+                        <th>Business Case</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td>{{ req.id }}</td>
+                        <td>{{ req.theatre }}</td>
+                        <td>{{ req.equipment }}</td>
+                        <td>
+                            {% if req.approval_status == "Pending" %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif req.approval_status == "Approved" %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif req.approval_status == "Rejected" %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ req.requester.get_full_name|default:req.requester.username }}</td>
+                        <td>{{ req.business_case }}</td>
+                        <td>{{ req.request_date|date:"M d, Y" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No requests found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
